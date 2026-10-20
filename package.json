@@ -1,0 +1,25 @@
+{
+  "name": "mapa-das-gemas",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "mapa": "node scripts/gerar-mapa.mjs",
+    "miniaturas": "node scripts/gerar-miniaturas.mjs"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.0",
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.0",
+    "d3-geo": "^3.1.1",
+    "playwright-core": "^1.55.0",
+    "vite": "^7.1.0"
+  }
+}
