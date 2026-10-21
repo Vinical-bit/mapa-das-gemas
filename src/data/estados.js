@@ -9,6 +9,10 @@ export const ESTADOS = {
 
 // Categorias do filtro de cor. "amostra" é só a bolinha do filtro.
 export const CORES = {
+  incolor: { nome: 'Incolor', amostra: 'linear-gradient(135deg,#ffffff,#b9c6d8)' },
+  vermelho: { nome: 'Vermelho', amostra: '#d23040' },
+  rosa: { nome: 'Rosa', amostra: '#f3a9c4' },
+  amarelo: { nome: 'Amarelo', amostra: '#f2cc3c' },
   roxo: { nome: 'Roxo', amostra: '#a77bea' },
   azul: { nome: 'Azul', amostra: '#2fd3ee' },
   verde: { nome: 'Verde', amostra: '#3fd08a' },

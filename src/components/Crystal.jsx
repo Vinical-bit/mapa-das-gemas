@@ -20,10 +20,17 @@ export function CrystalFilterDefs() {
   );
 }
 
-// Distribui n cristais em volta do centro do estado.
+// Distribui n cristais em fileiras de até 3, centradas no estado.
 export function posicoesCristais(cx, cy, n, espaco) {
-  return Array.from({ length: n }, (_, i) => ({
-    x: cx + (i - (n - 1) / 2) * espaco,
-    y: cy - 6 + (i % 2 ? 6 : 0),
-  }));
+  const porFila = Math.min(3, n);
+  const filas = Math.ceil(n / porFila);
+  return Array.from({ length: n }, (_, i) => {
+    const fila = Math.floor(i / porFila);
+    const naFila = fila === filas - 1 ? n - fila * porFila : porFila;
+    const col = i % porFila;
+    return {
+      x: cx + (col - (naFila - 1) / 2) * espaco + (fila % 2 ? espaco * 0.15 : 0),
+      y: cy - 6 + (fila - (filas - 1) / 2) * espaco * 0.95 + (col % 2 ? 5 : 0),
+    };
+  });
 }

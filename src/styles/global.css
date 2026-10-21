@@ -285,3 +285,6 @@ button { font: inherit; color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* "+N" ao lado da sigla quando o estado tem mais gemas do que cristais desenhados */
+.uf-extra { fill: var(--destaque); font-weight: 700; }

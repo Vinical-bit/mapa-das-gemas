@@ -1,9 +1,12 @@
 // Consultas derivadas dos dados. Os componentes leem daqui, não de gems.js direto.
-import { GEMS } from './gems.js';
+import { GEMS as GEMS_ORIGINAIS } from './gems.js';
 import { FONTES } from './fontes.js';
 import { ESTADOS, CORES, A_VERIFICAR_GERAL } from './estados.js';
 
-export { GEMS, FONTES, ESTADOS, CORES, A_VERIFICAR_GERAL };
+// Vitrine e navegação em ordem alfabética, independente da ordem no arquivo.
+export const GEMS = [...GEMS_ORIGINAIS].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+
+export { FONTES, ESTADOS, CORES, A_VERIFICAR_GERAL };
 
 export const gemPorSlug = Object.fromEntries(GEMS.map((g) => [g.slug, g]));
 

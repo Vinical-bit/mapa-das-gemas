@@ -6,7 +6,21 @@ import Crystal, { CrystalFilterDefs, posicoesCristais } from './Crystal.jsx';
 // Estados pequenos demais para os cristais em tamanho normal.
 const PEQUENOS = new Set(['AL', 'DF', 'ES', 'PB', 'RJ', 'RN', 'SE']);
 // siglas empurradas para o mar, à direita dos cristais
-const DIREITA = { RN: 30, PB: 34, ES: 26 };
+const DIREITA = { RN: 34, PB: 38, ES: 30 };
+
+// Estados com muitas gemas mostram até 6 cristais (3 nos pequenos; no celular, 3 e 2), cores
+// diferentes primeiro, e um "+N" com o resto. O nome completo vai no aria-label.
+function cristaisDoEstado(sigla, celular) {
+  const pequeno = PEQUENOS.has(sigla);
+  const vistas = new Set(), primeiro = [], depois = [];
+  for (const g of gemasPorUf[sigla]) {
+    (vistas.has(g.visual.brilho) ? depois : primeiro).push(g);
+    vistas.add(g.visual.brilho);
+  }
+  const todas = [...primeiro, ...depois];
+  const max = celular ? (pequeno ? 2 : 3) : pequeno ? 3 : 6;
+  return { pequeno, mostradas: todas.slice(0, max), extra: Math.max(0, todas.length - max) };
+}
 
 // No celular o mapa encolhe ~3x: os cristais e as siglas crescem para continuarem visíveis.
 const CELULAR = '(max-width: 599px)';
@@ -20,6 +34,7 @@ export default function BrazilMap({ ufSelecionada, onSelecionar }) {
   const celular = useSyncExternalStore(assinar, () => window.matchMedia(CELULAR).matches, () => false);
   const k = celular ? 1.6 : 1;
   const comGemas = mapa.estados.filter((e) => gemasPorUf[e.sigla]);
+  const info = Object.fromEntries(comGemas.map((e) => [e.sigla, cristaisDoEstado(e.sigla, celular)]));
 
   function rotulo(sigla) {
     const nomes = gemasPorUf[sigla].map((g) => g.nome).join(', ');
@@ -70,31 +85,36 @@ export default function BrazilMap({ ufSelecionada, onSelecionar }) {
         {/* cristais e siglas por cima, sem capturar clique */}
         <g aria-hidden="true" pointerEvents="none">
           {comGemas.map((e) => {
-            const gemas = gemasPorUf[e.sigla];
-            const pequeno = PEQUENOS.has(e.sigla);
-            return posicoesCristais(e.cx, e.cy, gemas.length, (pequeno ? 18 : 34) * k).map((p, i) => (
+            const { mostradas, pequeno } = info[e.sigla];
+            const espaco = (pequeno ? 18 : 34) * k;
+            return posicoesCristais(e.cx, e.cy, mostradas.length, espaco).map((p, i) => (
               <Crystal
-                key={e.sigla + gemas[i].slug}
+                key={e.sigla + mostradas[i].slug}
                 x={p.x}
                 y={p.y}
                 size={(pequeno ? 13 : 22) * k}
-                color={gemas[i].visual.brilho}
+                color={mostradas[i].visual.brilho}
                 delay={(e.cx + i * 97) % 3}
               />
             ));
           })}
-          {mapa.estados.map((e) => (
-            <text
-              key={e.sigla}
-              x={e.cx + (DIREITA[e.sigla] || 0) * k}
-              y={e.cy + (gemasPorUf[e.sigla] && !PEQUENOS.has(e.sigla) ? 42 * k : 5)}
-              className={'uf-sigla' + (gemasPorUf[e.sigla] ? ' tem' : '')}
-              fontSize={gemasPorUf[e.sigla] ? 17 * k : 15}
-              textAnchor="middle"
-            >
-              {e.sigla}
-            </text>
-          ))}
+          {mapa.estados.map((e) => {
+            const i = info[e.sigla];
+            const filas = i ? Math.ceil(i.mostradas.length / 3) : 0;
+            return (
+              <text
+                key={e.sigla}
+                x={e.cx + (DIREITA[e.sigla] || 0) * k}
+                y={e.cy + (i && !i.pequeno ? (filas > 1 ? 60 : 42) * k : 5)}
+                className={'uf-sigla' + (i ? ' tem' : '')}
+                fontSize={i ? 17 * k : 15}
+                textAnchor={DIREITA[e.sigla] ? 'start' : 'middle'}
+              >
+                {e.sigla}
+                {i?.extra > 0 && <tspan className="uf-extra"> +{i.extra}</tspan>}
+              </text>
+            );
+          })}
         </g>
       </svg>
       <figcaption className="sr-only">

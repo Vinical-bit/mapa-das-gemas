@@ -66,7 +66,7 @@ export default function GemPage() {
               <dt>Dureza na escala de Mohs</dt>
               <dd>{gem.mohs.texto} <Refs fato={gem.mohs} />{gem.mohs.nota && <small>{gem.mohs.nota}</small>}</dd>
             </div>
-            <div><dt>Cor</dt><dd>{gem.cor.texto} <Refs fato={gem.cor} /></dd></div>
+            {gem.cor && <div><dt>Cor</dt><dd>{gem.cor.texto} <Refs fato={gem.cor} /></dd></div>}
           </dl>
         </section>
 
